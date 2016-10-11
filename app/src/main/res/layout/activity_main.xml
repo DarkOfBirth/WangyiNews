@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="lanou.wangyinews.MainActivity">
+    <FrameLayout
+        android:id="@+id/content_framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9">
+
+    </FrameLayout>
+   <RadioGroup
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:layout_weight="1"
+       android:orientation="horizontal">
+       <RadioButton
+           android:layout_width="0dp"
+           android:layout_height="match_parent"
+           android:layout_weight="1"
+           android:button="@null"
+          android:drawableTop="@drawable/selector_news"
+           android:textAlignment="center"
+           android:text=" 新闻"
+           android:checked="true"
+           android:id="@+id/rb_News"/>
+
+       <RadioButton
+           android:layout_width="0dp"
+           android:layout_height="match_parent"
+           android:layout_weight="1"
+           android:button="@null"
+           android:textAlignment="center"
+           android:drawableTop="@drawable/selector_live"
+           android:text="直播"
+           android:checked="false"
+           android:id="@+id/rb_Live"/>
+       <RadioButton
+           android:layout_width="0dp"
+           android:layout_height="match_parent"
+           android:layout_weight="1"
+           android:button="@null"
+           android:textAlignment="center"
+           android:drawableTop="@drawable/selector_topic"
+           android:text="话题"
+           android:checked="false"
+           android:id="@+id/rb_Topic"/>
+       <RadioButton
+           android:layout_width="0dp"
+           android:layout_height="match_parent"
+           android:layout_weight="1"
+           android:button="@null"
+           android:textAlignment="center"
+           android:drawableTop="@drawable/selector_mine"
+           android:checked="false"
+           android:text="我"
+           android:id="@+id/rb_Mine"/>
+   </RadioGroup>
+</LinearLayout>
