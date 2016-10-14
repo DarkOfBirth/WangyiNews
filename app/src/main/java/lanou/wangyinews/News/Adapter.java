@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Created by dllo on 16/9/28.
  */
 public class Adapter extends FragmentPagerAdapter {
-    private String[] title = {"头条","体育","娱乐"};
+    private String[] title = {"头条","体育","娱乐","图片"};
     public ArrayList<Fragment> list;
 
     public void setList(ArrayList<Fragment> list) {
