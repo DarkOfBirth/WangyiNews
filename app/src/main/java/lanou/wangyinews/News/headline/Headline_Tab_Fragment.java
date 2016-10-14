@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import lanou.wangyinews.News.database.DBTools;
 import lanou.wangyinews.R;
 
 
@@ -36,11 +37,15 @@ public class Headline_Tab_Fragment extends Fragment {
     private PullToRefreshListView lv_headline;
     private ArrayList<HeadLineBean> headLineBeens;
     private HeadLineAdapter headLineAdapter;
+    private DBTools tools;
+    private   int a = 1;
+
 
     @Override
     public void onAttach(Context context) {
         this.context = context;
         super.onAttach(context);
+        tools = new DBTools(context);
     }
 
     @Nullable
@@ -59,28 +64,54 @@ public class Headline_Tab_Fragment extends Fragment {
         headLineAdapter = new HeadLineAdapter(context);
         headLineBeens = new ArrayList<>();
         lv_headline.setAdapter(headLineAdapter);
+        if(tools.isNetWorkAvailable(context)) {
+            Toast.makeText(context, "网络畅通", Toast.LENGTH_SHORT).show();
+            tools.clearHeadLineData();
         HeadLineAsyncTask headlineAsyncTask = new HeadLineAsyncTask();
         String url = "http://c.3g.163.com/nc/article/headline/T1348647909107/0-20.html";
         headlineAsyncTask.execute(url);
+        }else{
+            Toast.makeText(context, "网络断开", Toast.LENGTH_SHORT).show();
+           headLineAdapter.setBeanList(tools.queryDataFormHeadLine());
+        }
         lv_headline.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> pullToRefreshBase) {
+            if(tools.isNetWorkAvailable(context)){
 
                 Toast.makeText(context, "下拉刷新",Toast.LENGTH_SHORT).show();
                 PullToRefresh headlineAsyncTask = new PullToRefresh();
+                a=0;
+                tools.clearHeadLineData();
                 String url = "http://c.3g.163.com/nc/article/headline/T1348647909107/0-20.html";
                 headlineAsyncTask.execute(url);
+            } else {
+                pullToRefreshBase.onRefreshComplete();
+                Log.d("Headline_Tab_Fragment", "网络似乎断了,请检查网络状况~~");
+            }
+
               //  pullToRefreshBase.onRefreshComplete();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> pullToRefreshBase) {
                 Toast.makeText(context, "上拉加载更多",Toast.LENGTH_SHORT).show();
+                if(tools.isNetWorkAvailable(context)){
+
               //  pullToRefreshBase.onRefreshComplete();
                 PullToRefresh headlineAsyncTask = new PullToRefresh();
-                String url = "http://c.3g.163.com/nc/article/headline/T1348647909107/0-40.html";
+              String url =  "http://c.3g.163.com/nc/article/headline/T1348647909107/" + 20 * a +"" + "-" + (20 * a + 20)+ "" + ".html";
+                a++;
+
                 headlineAsyncTask.execute(url);
+
+                }else {
+                    pullToRefreshBase.onRefreshComplete();
+                    Log.d("Headline_Tab_Fragment", "网络似乎断了,请检查网络状况~~");
+                }
             }
+
+
         });
 
     }
@@ -191,13 +222,13 @@ public class Headline_Tab_Fragment extends Fragment {
                 if(object.has("postid")) {
                     bean.setPostid(object.getString("postid"));
                 }
-
+                tools.insertDataToHeadLine(bean);
                 beans.add(bean);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         Log.d("HeadLineAsyncTask", "beans:" + beans);
-        return beans;
+        return tools.queryDataFormHeadLine();
     }
 }

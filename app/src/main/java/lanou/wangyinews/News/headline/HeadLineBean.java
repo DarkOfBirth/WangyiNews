@@ -13,6 +13,14 @@ public class HeadLineBean {
     String title;
     // 新闻的唯一值
     String postid;
+    public HeadLineBean(){
+        super();
+    }
+    public HeadLineBean(String imgurl, String title, String postid) {
+        this.imgurl = imgurl;
+        this.title = title;
+        this.postid = postid;
+    }
 
     public String getPostid() {
         return postid;

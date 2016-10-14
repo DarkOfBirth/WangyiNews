@@ -1,6 +1,7 @@
 package lanou.wangyinews.News.headline;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class HeadLineAdapter extends BaseAdapter {
 
     public void setBeanList(ArrayList<HeadLineBean> beanList) {
         this.beanList = beanList;
+//        Log.d("HeadLineAdapter", beanList.get(0).getTitle());
         notifyDataSetChanged();
     }
 
@@ -59,8 +61,9 @@ public class HeadLineAdapter extends BaseAdapter {
         }
 
         viewHolder.tv_item_headline.setText(beanList.get(position).getTitle());
-        viewHolder.iv_item_headline.setImageBitmap(null);
-        Picasso.with(context).load(beanList.get(position).getImgurl()).into(viewHolder.iv_item_headline);
+        viewHolder.iv_item_headline.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher));
+                Picasso.with(context).load(beanList.get(position).getImgurl()).into(viewHolder.iv_item_headline);
+
 
         return convertView;
     }
