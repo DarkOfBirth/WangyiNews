@@ -16,7 +16,9 @@ public class MySQLHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table "+DBValues.HEADLINE_TABLE+"(" +
                 "id integer primary key autoincrement," +
-                " title text, imgurl text, postid text) ");
+                " title text, imgurl text, postid text,type text) ");
+        db.execSQL("create table "+DBValues.GALLERY_TABLE+"(id integer primary " +
+                "key autoincrement, title text, imgurl text, postid text)");
 
     }
 

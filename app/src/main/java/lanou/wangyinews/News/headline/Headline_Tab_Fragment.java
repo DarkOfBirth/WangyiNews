@@ -61,12 +61,13 @@ public class Headline_Tab_Fragment extends Fragment {
         lv_headline = (PullToRefreshListView) view.findViewById(R.id.lv_headline);
         lv_headline.setMode(PullToRefreshBase.Mode.BOTH);
 
+
         headLineAdapter = new HeadLineAdapter(context);
         headLineBeens = new ArrayList<>();
         lv_headline.setAdapter(headLineAdapter);
         if(tools.isNetWorkAvailable(context)) {
             Toast.makeText(context, "网络畅通", Toast.LENGTH_SHORT).show();
-            tools.clearHeadLineData();
+          //  tools.clearHeadLineData();
         HeadLineAsyncTask headlineAsyncTask = new HeadLineAsyncTask();
         String url = "http://c.3g.163.com/nc/article/headline/T1348647909107/0-20.html";
         headlineAsyncTask.execute(url);
@@ -78,7 +79,7 @@ public class Headline_Tab_Fragment extends Fragment {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> pullToRefreshBase) {
             if(tools.isNetWorkAvailable(context)){
-
+                tools.clearHeadLineData();
                 Toast.makeText(context, "下拉刷新",Toast.LENGTH_SHORT).show();
                 PullToRefresh headlineAsyncTask = new PullToRefresh();
                 a=0;
@@ -206,6 +207,7 @@ public class Headline_Tab_Fragment extends Fragment {
      * @return  解析后数据的集合集合
      */
     private ArrayList<HeadLineBean> parse(String result) {
+        Log.d("Headline_Tab_Fragment", "开始解析数据");
         ArrayList<HeadLineBean> beans = new ArrayList<>();
         try {
             JSONObject jsonobject = new JSONObject(result);
@@ -213,6 +215,7 @@ public class Headline_Tab_Fragment extends Fragment {
             for (int i = 0; i < jsonarray.length(); i++) {
                 HeadLineBean bean = new HeadLineBean();
                 JSONObject object = (JSONObject) jsonarray.get(i);
+
                 if (object.has("title")) {
                     bean.setTitle(object.getString("title"));
                 }
@@ -222,6 +225,40 @@ public class Headline_Tab_Fragment extends Fragment {
                 if(object.has("postid")) {
                     bean.setPostid(object.getString("postid"));
                 }
+
+                if(i == 0){
+
+                    if(object.has("ads")){
+                        Log.d("Headline_Tab_Fragment", "轮播图");
+                        bean.setType("0");
+                        // 如果含有ads字段, 说明是轮播图
+                        //ArrayList<HeadLineBean> imgbeanlist= new ArrayList<>();
+                        JSONArray adsarray = object.getJSONArray("ads");
+                        Log.d("Headline_Tab_Fragment", "adsarray.length():" + adsarray.length());
+                        {
+                            for (int j = 0; j <adsarray.length() ; j++) {
+                                Log.d("Headline_Tab_Fragment", "次数"+j);
+                                HeadLineBean imgbean = new HeadLineBean();
+                                JSONObject adsobject = (JSONObject) adsarray.get(j);
+                                if(adsobject.has("title")){
+                                    imgbean.setTitle(adsobject.getString("title"));
+                                    Log.d("Headline_Tab_Fragment", imgbean.getTitle());
+                                }
+                                if(adsobject.has("imgsrc")){
+                                    imgbean.setImgurl(adsobject.getString("imgsrc"));
+                                }
+                                imgbean.setPostid(bean.getPostid());
+                                tools.insertImageToGallery(imgbean);
+                            }
+                        }
+                    }
+                }else{
+                    bean.setType("1");
+                }
+
+
+
+
                 tools.insertDataToHeadLine(bean);
                 beans.add(bean);
             }

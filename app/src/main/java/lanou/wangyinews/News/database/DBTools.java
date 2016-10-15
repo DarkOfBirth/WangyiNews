@@ -42,6 +42,7 @@ public class DBTools {
         values.put("title", headLineBean.getTitle());
         values.put("imgurl", headLineBean.getImgurl());
         values.put("postid", headLineBean.getPostid());
+        values.put("type",headLineBean.getType());
         Long lines = database.insert(DBValues.HEADLINE_TABLE, null, values);
 
         Log.d("DBTools", "insertlines:" + lines);
@@ -75,7 +76,10 @@ public class DBTools {
 
     }
 
-
+    /**
+     * 从头条数据库查询
+     * @return
+     */
     public ArrayList<HeadLineBean> queryDataFormHeadLine() {
 
         ArrayList<HeadLineBean> beansArrayList = new ArrayList();
@@ -86,7 +90,10 @@ public class DBTools {
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String imgurl = cursor.getString(cursor.getColumnIndex("imgurl"));
                 String postid = cursor.getString(cursor.getColumnIndex("postid"));
-                HeadLineBean bean = new HeadLineBean(imgurl, title, postid);
+                String type = cursor.getString(cursor.getColumnIndex("type"));
+
+
+                HeadLineBean bean = new HeadLineBean(imgurl, title, postid,type);
                 beansArrayList.add(bean);
 
             }
@@ -97,5 +104,50 @@ public class DBTools {
 
     public void clearHeadLineData() {
         database.delete(DBValues.HEADLINE_TABLE, null, null);
+        database.delete(DBValues.GALLERY_TABLE, null, null);
+    }
+
+    /**
+     * 轮播图的插入
+     * @param imgbean
+     */
+    public void insertImageToGallery(HeadLineBean imgbean) {
+        Cursor cursor = database.query(DBValues.GALLERY_TABLE, null, "postid = ? and imgurl = ?",
+                new String[]{imgbean.getPostid(),imgbean.getImgurl()}, null, null, null);
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return;
+        }
+        cursor.close();
+        ContentValues values = new ContentValues();
+        values.put("title",  imgbean.getTitle());
+        values.put("imgurl", imgbean.getImgurl());
+        values.put("postid", imgbean.getPostid());
+        database.insert(DBValues.GALLERY_TABLE,null,values);
+    }
+
+    /**
+     * 从轮播图图库中查找所需要的轮播图
+     *
+     * @param postid 唯一的id
+     * @return
+     */
+    public ArrayList<HeadLineBean> queryImageFromGallery(String postid) {
+        ArrayList<HeadLineBean> imgbeans = new ArrayList<>();
+        Cursor cursor = database.query(DBValues.GALLERY_TABLE,null,"postid = ?",
+                new String[]{postid},null,null,null);
+        if(cursor != null) {
+            while (cursor.moveToNext()){
+                 HeadLineBean bean = new HeadLineBean();
+                bean.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                bean.setImgurl(cursor.getString(cursor.getColumnIndex("imgurl")));
+                imgbeans.add(bean);
+
+            }
+
+        }
+        cursor.close();
+        return imgbeans;
+
     }
 }

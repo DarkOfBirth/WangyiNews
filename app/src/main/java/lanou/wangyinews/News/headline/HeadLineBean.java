@@ -13,13 +13,24 @@ public class HeadLineBean {
     String title;
     // 新闻的唯一值
     String postid;
+    String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public HeadLineBean(){
         super();
     }
-    public HeadLineBean(String imgurl, String title, String postid) {
+    public HeadLineBean(String imgurl, String title, String postid,String type) {
         this.imgurl = imgurl;
         this.title = title;
         this.postid = postid;
+        this.type = type;
     }
 
     public String getPostid() {
